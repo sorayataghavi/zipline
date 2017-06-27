@@ -141,6 +141,8 @@ def load_market_data(trading_day=None, trading_days=None, bm_symbol='SPY',
     first_date = trading_days[0]
     now = pd.Timestamp.utcnow()
 
+    # Original notes:
+    # =====================================================================
     # We expect to have benchmark and treasury data that's current up until
     # **two** full trading days prior to the most recently completed trading
     # day.
@@ -152,6 +154,16 @@ def load_market_data(trading_day=None, trading_days=None, bm_symbol='SPY',
     # conservative, we instead expect that at any time on the 22nd, we can
     # download data for Tuesday the 20th, which is two full trading days prior
     # to the date on which we're running a test.
+    #
+    # New implementation:
+    # ======================================================================
+    # In order to be able to work with the data from the past two days
+    # we're taking the last known value and using it to fill the missing
+    # time periods for benchmark returns and treasury curves. We need this
+    # for paper trading metrics calculations and given that we require at
+    # least one month of data for that - having incorrect benchmarks
+    # returns for the past 1-2 days doesn't affect those metrics in any
+    # significant way.
 
     # We'll attempt to download new data if the latest entry in our cache is
     # before this date.
